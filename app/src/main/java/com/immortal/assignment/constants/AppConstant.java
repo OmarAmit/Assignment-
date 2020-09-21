@@ -12,6 +12,7 @@ public class AppConstant {
     public static final String API_TAGS = "kitten";
     public static final String API_PER_PAGE = "10";
     public static final String API_PAGE = "1";
-
+    public static final int PAGE_SIZE = 10;
+    public static final int FIRST_PAGE = 1;
 
 }

@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -19,15 +21,15 @@ import com.immortal.assignment.view.DetailsScreen;
 import java.util.ArrayList;
 
 
-public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
+public class ImageAdapter extends PagedListAdapter<Image, ImageAdapter.ViewHolder> {
 
     private Context context;
     ArrayList<Image> imageArrayList;
     private Intent intent;
 
-    public ImageAdapter(Context context, ArrayList<Image> imageArrayList) {
+    public ImageAdapter(Context context) {
+        super(DIFF_CALLBACK);
         this.context = context;
-        this.imageArrayList = imageArrayList;
     }
 
     @NonNull
@@ -39,7 +41,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ImageAdapter.ViewHolder viewHolder, int i) {
-        Image image = imageArrayList.get(i);
+        Image image = getItem(i);
         Log.e("image", image.getId() + "-" + image.getSecret());
 
         String image_url = "https://farm" + image.getFarm() + "." + "staticflickr.com/" + image.getServer() + "/" + image.getId() + "_" + image.getSecret() + ".jpg";
@@ -56,14 +58,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 intent = new Intent(context, DetailsScreen.class);
                 intent.putExtra("img_url", image_url);
                 context.startActivity(intent);
-//    }
             }
         });
-    }
-
-    @Override
-    public int getItemCount() {
-        return imageArrayList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -75,4 +71,16 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         }
     }
 
+    private static DiffUtil.ItemCallback<Image> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<Image>() {
+                @Override
+                public boolean areItemsTheSame(Image oldItem, Image newItem) {
+                    return oldItem.getId() == newItem.getId();
+                }
+
+                @Override
+                public boolean areContentsTheSame(Image oldItem, Image newItem) {
+                    return oldItem.equals(newItem);
+                }
+            };
 }

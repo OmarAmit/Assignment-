@@ -7,17 +7,23 @@ import static com.immortal.assignment.constants.AppConstant.BASE_URL;
 
 public class RetrofitRequest {
 
-    private static Retrofit retrofit;
+    private  Retrofit retrofit;
+    private static RetrofitRequest mInstance;
 
-
-    public static Retrofit getRetrofitInstance() {
-        if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+    private RetrofitRequest(){
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+    public static synchronized RetrofitRequest getInsance(){
+        if(mInstance == null){
+            mInstance = new RetrofitRequest();
         }
-        return retrofit;
+        return mInstance;
     }
 
+    public ApiRequest getApi(){
+        return retrofit.create(ApiRequest.class);
+    }
 }

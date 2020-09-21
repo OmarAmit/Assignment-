@@ -1,7 +1,10 @@
 package com.immortal.assignment.view;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         initView();
         setAdapter();
         getImages();
+
     }
 
     private void setAdapter() {
@@ -53,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         recycler_view.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
         recycler_view.setItemAnimator(new DefaultItemAnimator());
         recycler_view.setHasFixedSize(true);
-        adapter = new ImageAdapter(MainActivity.this, imageArrayList);
+        adapter = new ImageAdapter(this);
         recycler_view.setAdapter(adapter);
         imageViewModel = ViewModelProviders.of(this).get(ImageViewModel.class);
     }
@@ -65,15 +69,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getImages() {
-        imageViewModel.getImageResponseLiveData().observe(this, imageResponse -> {
-            if (imageResponse != null) {
-
+        imageViewModel.itemPagedList.observe(this, new Observer<PagedList<Image>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<Image> items) {
+                Log.e("items", items.size() + "-");
                 progress_circular.setVisibility(View.GONE);
-                Log.e("getTotal", imageResponse.getStatus());
-                Log.e("getTotal", imageResponse.getPhoto().getTotal());
-                List<Image> imageList = imageResponse.getPhoto().getImageList();
-                imageArrayList.addAll(imageList);
-                adapter.notifyDataSetChanged();
+                adapter.submitList(items);
             }
         });
     }
