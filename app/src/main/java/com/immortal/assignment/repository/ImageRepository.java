@@ -37,9 +37,7 @@ public class ImageRepository{
                             data.setValue(response.body());
                             Log.e("response->body", "" + response.body().toString());
 
-//                            Log.e(TAG, "articles total result:: " + response.body().getTotalResults());
                             Log.e(TAG, "articles size:: " + response.body().getStatus());
-//                            Log.e(TAG, "articles title pos 0:: " + response.body().getArticles().get(0).getTitle());
                         }
                     }
 
